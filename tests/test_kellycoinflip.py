@@ -1,17 +1,24 @@
-from gym_toytext.kellycoinflip import KellyCoinflipEnv
+import gym
+import gym_toytext
 
 
-class TestKellyCoinflipEnv:
-    @staticmethod
-    def test_done_when_reaches_max_wealth():
-        # https://github.com/openai/gym/issues/1266
-        env = KellyCoinflipEnv()
-        env.seed(1)
-        env.reset()
-        done = False
+def test_keyllycoinflip():
+    env = gym.make('KellyCoinflip-v0')
+    observation = env.reset()
+    while True:
+        action = env.action_space.sample()
+        observation, reward, done, info = env.step(action)
+        if done:
+            break
+    env.close()
 
-        while not done:
-            action = int(env.wealth * 20)  # bet 20% of the wealth
-            observation, reward, done, info = env.step(action)
 
-        assert env.wealth == env.max_wealth
+def test_keyllycoinflip_generalized():
+    env = gym.make('KellyCoinflipGeneralized-v0')
+    observation = env.reset()
+    while True:
+        action = env.action_space.sample()
+        observation, reward, done, info = env.step(action)
+        if done:
+            break
+    env.close()

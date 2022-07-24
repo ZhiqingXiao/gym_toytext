@@ -27,18 +27,29 @@ class RouletteEnv(gym.Env):
     def step(self, action):
         assert self.action_space.contains(action)
         if action == self.n - 1:
-            # observation, reward, done, info
-            return 0, 0, True, {}
-
-        # N.B. np.random.randint draws from [A, B) while random.randint draws from [A,B]
-        val = self.np_random.randint(0, self.n - 1)
-        if val == action == 0:
-            reward = self.n - 2.0
-        elif val != 0 and action != 0 and val % 2 == action % 2:
-            reward = 1.0
+            reward = 0.0
+            done = True
         else:
-            reward = -1.0
-        return 0, reward, False, {}
+            # N.B. np.random.randint draws from [A, B) while random.randint draws from [A,B]
+            val = self.np_random.randint(0, self.n - 1)
+            if val == action == 0:
+                reward = self.n - 2.0
+            elif val != 0 and action != 0 and val % 2 == action % 2:
+                reward = 1.0
+            else:
+                reward = -1.0
+            done = False
+        results = (0, reward, done, {})
+        try:
+            from gym.utils.step_api_compatibility import step_api_compatibility
+            return step_api_compatibility(results, True)
+        except:
+            return results
 
-    def reset(self):
-        return 0
+    def reset(self, *, seed=None, return_info=False, options=None):
+        if seed is not None:
+            self.seed(seed)
+        if return_info:
+            return 0, {}
+        else:
+            return 0

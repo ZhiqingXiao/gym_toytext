@@ -37,7 +37,7 @@ class KellyCoinflipEnv(gym.Env):
     would be better.) For a harder version which randomizes the 3 key parameters, see the
     Generalized Kelly coinflip game."""
 
-    metadata = {"render.modes": ["human"]}
+    metadata = {"render.modes": ["human"], "render_modes": ["human"]}
 
     def __init__(self, initial_wealth=25.0, edge=0.6, max_wealth=250.0, max_rounds=300):
 
@@ -76,15 +76,25 @@ class KellyCoinflipEnv(gym.Env):
         done = self.wealth < 0.01 or self.wealth == self.max_wealth or not self.rounds
         reward = self.wealth if done else 0.0
 
-        return self._get_obs(), reward, done, {}
+        results = (self._get_obs(), reward, done, {})
+        try:
+            from gym.utils.step_api_compatibility import step_api_compatibility
+            return step_api_compatibility(results, True)
+        except:
+            return results
 
     def _get_obs(self):
         return np.array([self.wealth], dtype=np.float32), self.rounds
 
-    def reset(self):
+    def reset(self, *, seed=None, return_info=False, options=None):
+        if seed is not None:
+            self.seed(seed)
         self.rounds = self.max_rounds
         self.wealth = self.initial_wealth
-        return self._get_obs()
+        if return_info:
+            return self._get_obs(), {}
+        else:
+            return self._get_obs()
 
     def render(self, mode="human"):
         print("Current wealth: ", self.wealth, "; Rounds left: ", self.rounds)
@@ -113,7 +123,7 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
     what one would calculate using a decision tree for any specific case), and
     represents a good challenge for RL agents."""
 
-    metadata = {"render.modes": ["human"]}
+    metadata = {"render.modes": ["human"], "render_modes": ["human"]}
 
     def __init__(
         self,
@@ -232,7 +242,12 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
         done = self.wealth < 0.01 or self.wealth == self.max_wealth or not self.rounds
         reward = self.wealth if done else 0.0
 
-        return self._get_obs(), reward, done, {}
+        results = (self._get_obs(), reward, done, {})
+        try:
+            from gym.utils.step_api_compatibility import step_api_compatibility
+            return step_api_compatibility(results, True)
+        except:
+            return results
 
     def _get_obs(self):
         return (
@@ -243,7 +258,9 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
             np.array([float(self.max_ever_wealth)], dtype=np.float32),
         )
 
-    def reset(self):
+    def reset(self, *, seed=None, return_info=False, options=None):
+        if seed is not None:
+            self.seed(seed)
         # re-init everything to draw new parameters etc, but preserve the RNG for
         # reproducibility and pass in the same hyper-parameters as originally specified:
         self.__init__(
@@ -257,7 +274,10 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
             reseed=False,
             clip_distributions=self.clip_distributions,
         )
-        return self._get_obs()
+        if return_info:
+            return self._get_obs(), {}
+        else:
+            return self._get_obs()
 
     def render(self, mode="human"):
         print(

@@ -92,15 +92,23 @@ class GuessingGame(gym.Env):
         if self.guess_count >= self.guess_max:
             done = True
 
-        return (
-            self.observation,
-            reward,
-            done,
-            {"number": self.number, "guesses": self.guess_count},
-        )
+        results = (self.observation, reward, done, self._get_info())
+        try:
+            from gym.utils.step_api_compatibility import step_api_compatibility
+            return step_api_compatibility(results, True)
+        except:
+            return results
 
-    def reset(self):
+    def _get_info(self):
+        return {"number": self.number, "guesses": self.guess_count}
+
+    def reset(self, *, seed=None, return_info=False, options=None):
+        if seed is not None:
+            self.seed(seed)
         self.number = self.np_random.uniform(-self.range, self.range)
         self.guess_count = 0
         self.observation = 0
-        return self.observation
+        if return_info:
+            return self.observation, self._get_info()
+        else:
+            return self.observation

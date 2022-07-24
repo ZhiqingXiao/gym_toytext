@@ -1,20 +1,18 @@
 from setuptools import setup
 
-VERSION = "0.0.1"
-
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="gym-legacy-toytext",
-    version=VERSION,
-    description="Legacy Toytext Environments from OpenAI Gym",
+    name="gym-toytext",
+    version="0.25.0",
+    description="Text Environments forked from OpenAI Gym",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Rohan138/gym-legacy-toytext",
-    author="Rohan Potdar",
-    author_email="rohanpotdar138@gmail.com",
+    url="https://github.com/ZhiqingXiao/gym_toytext",
+    author="Zhiqing Xiao",
+    author_email="xzq.xiaozhiqing@gmail.com",
     license="",
     packages=["gym_toytext"],
     install_requires=[

@@ -50,8 +50,18 @@ class NChainEnv(gym.Env):
         else:  # 'forwards': stay at the end of the chain, collect large reward
             reward = self.large
         done = False
-        return self.state, reward, done, {}
+        results = (self.state, reward, done, {})
+        try:
+            from gym.utils.step_api_compatibility import step_api_compatibility
+            return step_api_compatibility(results, True)
+        except:
+            return results
 
-    def reset(self):
+    def reset(self, *, seed=None, return_info=False, options=None):
+        if seed is not None:
+            self.seed(seed)
         self.state = 0
-        return self.state
+        if return_info:
+            return self.state, {}
+        else:
+            return self.state

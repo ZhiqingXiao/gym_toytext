@@ -1,10 +1,23 @@
 from gym.envs.registration import register
 
-from gym_toytext.roulette import RouletteEnv
-from gym_toytext.nchain import NChainEnv
-from gym_toytext.hotter_colder import HotterColder
 from gym_toytext.guessing_game import GuessingGame
+from gym_toytext.hotter_colder import HotterColder
 from gym_toytext.kellycoinflip import KellyCoinflipEnv, KellyCoinflipGeneralizedEnv
+from gym_toytext.nchain import NChainEnv
+from gym_toytext.roulette import RouletteEnv
+
+
+register(
+    id="GuessingGame-v0",
+    entry_point="gym_toytext:GuessingGame",
+    max_episode_steps=200,
+)
+
+register(
+    id="HotterColder-v0",
+    entry_point="gym_toytext:HotterColder",
+    max_episode_steps=200,
+)
 
 register(
     id="KellyCoinflip-v0",
@@ -16,7 +29,6 @@ register(
     id="KellyCoinflipGeneralized-v0",
     entry_point="gym_toytext:KellyCoinflipGeneralizedEnv",
 )
-
 
 register(
     id="NChain-v0",
@@ -31,14 +43,3 @@ register(
 )
 
 
-register(
-    id="GuessingGame-v0",
-    entry_point="gym_toytext:GuessingGame",
-    max_episode_steps=200,
-)
-
-register(
-    id="HotterColder-v0",
-    entry_point="gym_toytext:HotterColder",
-    max_episode_steps=200,
-)
