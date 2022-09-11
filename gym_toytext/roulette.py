@@ -46,7 +46,7 @@ class RouletteEnv(gym.Env):
         except:
             return results
 
-    def reset(self, *, seed=None, return_info=False, options=None):
+    def reset(self, *, seed=None, return_info=True, options=None):
         if seed is not None:
             self.seed(seed)
         if return_info:

@@ -86,7 +86,7 @@ class KellyCoinflipEnv(gym.Env):
     def _get_obs(self):
         return np.array([self.wealth], dtype=np.float32), self.rounds
 
-    def reset(self, *, seed=None, return_info=False, options=None):
+    def reset(self, *, seed=None, return_info=True, options=None):
         if seed is not None:
             self.seed(seed)
         self.rounds = self.max_rounds
@@ -258,7 +258,7 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
             np.array([float(self.max_ever_wealth)], dtype=np.float32),
         )
 
-    def reset(self, *, seed=None, return_info=False, options=None):
+    def reset(self, *, seed=None, return_info=True, options=None):
         if seed is not None:
             self.seed(seed)
         # re-init everything to draw new parameters etc, but preserve the RNG for

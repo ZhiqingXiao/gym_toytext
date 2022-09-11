@@ -16,9 +16,8 @@ This repository contains the text environments previously present in OpenAI Gym 
 
 ### Compatibility
 
-```
-gym>=0.19
-```
+- `gym>=0.26`: Please use `gym_toytext>=0.26`.
+- `gym>=0.19, gym<0.26`: Please use `gym_toytext==0.25`.
 
 
 ### Install
@@ -35,12 +34,12 @@ import gym
 import gym_toytext
 
 env = gym.make("GuessingGame-v0")
-observation = env.reset()
+observation, info = env.reset()
 low, high = env.action_space.low, env.action_space.high
 while True:
     action = (low + high) / 2.
-    observation, reward, done, info = env.step(action)
-    if done:
+    observation, reward, termination, truncation, info = env.step(action)
+    if termination or truncation:
         break
     if observation == 1:
         low = action

@@ -80,7 +80,7 @@ class HotterColder(gym.Env):
     def _get_info(self):
         return {"number": self.number, "guesses": self.guess_count}
 
-    def reset(self, *, seed=None, return_info=False, options=None):
+    def reset(self, *, seed=None, return_info=True, options=None):
         if seed is not None:
             self.seed(seed)
         self.number = self.np_random.uniform(-self.range, self.range)

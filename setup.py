@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="gym-toytext",
-    version="0.25.0",
+    version="0.26.0",
     description="Text Environments forked from OpenAI Gym",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,7 +16,7 @@ setup(
     license="",
     packages=["gym_toytext"],
     install_requires=[
-        "gym>=0.19.0",
+        "gym>=0.26.0",
     ],
     python_requires=">=3.6",
     classifiers=[
