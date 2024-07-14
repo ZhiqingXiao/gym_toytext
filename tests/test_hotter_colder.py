@@ -8,8 +8,8 @@ def test_hotter_colder():
     low, high = env.action_space.low, env.action_space.high
     while True:
         action = (low + high) / 2.
-        observation, reward, termination, truncation, info = env.step(action)
-        if termination or truncation:
+        observation, reward, terminated, truncated, info = env.step(action)
+        if terminated or truncated:
             break
         if observation == 1:
             low = action

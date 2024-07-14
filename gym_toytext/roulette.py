@@ -18,11 +18,6 @@ class RouletteEnv(gym.Env):
         self.n = spots + 1
         self.action_space = spaces.Discrete(self.n)
         self.observation_space = spaces.Discrete(1)
-        self.seed()
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def step(self, action):
         assert self.action_space.contains(action)
@@ -47,8 +42,7 @@ class RouletteEnv(gym.Env):
             return results
 
     def reset(self, *, seed=None, return_info=True, options=None):
-        if seed is not None:
-            self.seed(seed)
+        super().reset(seed=seed)
         if return_info:
             return 0, {}
         else:

@@ -57,12 +57,7 @@ class KellyCoinflipEnv(gym.Env):
         self.max_wealth = max_wealth
         self.np_random = None
         self.rounds = None
-        self.seed()
         self.reset()
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def step(self, action):
         bet_in_dollars = min(
@@ -86,9 +81,8 @@ class KellyCoinflipEnv(gym.Env):
     def _get_obs(self):
         return np.array([self.wealth], dtype=np.float32), self.rounds
 
-    def reset(self, *, seed=None, return_info=True, options=None):
-        if seed is not None:
-            self.seed(seed)
+    def reset(self, *, seed=None, options=None):
+        super().reset(seed=seed)
         self.rounds = self.max_rounds
         self.wealth = self.initial_wealth
         if return_info:
@@ -96,7 +90,7 @@ class KellyCoinflipEnv(gym.Env):
         else:
             return self._get_obs()
 
-    def render(self, mode="human"):
+    def render(self):
         print("Current wealth: ", self.wealth, "; Rounds left: ", self.rounds)
 
 
@@ -220,10 +214,6 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
         self.rounds = self.max_rounds
         self.max_wealth = max_wealth
 
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
     def step(self, action):
         bet_in_dollars = min(action / 100.0, self.wealth)
 
@@ -259,8 +249,7 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
         )
 
     def reset(self, *, seed=None, return_info=True, options=None):
-        if seed is not None:
-            self.seed(seed)
+        super().reset(seed=seed)
         # re-init everything to draw new parameters etc, but preserve the RNG for
         # reproducibility and pass in the same hyper-parameters as originally specified:
         self.__init__(
@@ -279,7 +268,8 @@ class KellyCoinflipGeneralizedEnv(gym.Env):
         else:
             return self._get_obs()
 
-    def render(self, mode="human"):
+    def render(self):
+        mode = self.render_mode
         print(
             "Current wealth: ",
             self.wealth,

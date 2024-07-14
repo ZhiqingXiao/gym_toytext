@@ -13,6 +13,11 @@ This repository contains the text environments previously present in OpenAI Gym 
 | `NChain-v0` | [`nchain.py`](https://github.com/openai/gym/commits/master/gym/envs/toy_text/nchain.py) | @machinaut |
 | `Roulette-v0` | [`roulette.py`](https://github.com/openai/gym/commits/master/gym/envs/toy_text/roulette.py) | @gdb |
 
+We also provide alternative versions of `GuessingGame`:
+
+- `GuessingGame-v1` and `GuessingGameRange-v1` use different default parameters.
+- `GuessingGameRange-v0`  and `GuessingGameRange-v1` show observations in the format of `(low, high)`.
+
 
 ### Compatibility
 

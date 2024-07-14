@@ -38,12 +38,7 @@ class HotterColder(gym.Env):
         self.guess_max = 200
         self.observation = 0
 
-        self.seed()
         self.reset()
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def step(self, action):
         if isinstance(action, (int, float)):
@@ -81,8 +76,7 @@ class HotterColder(gym.Env):
         return {"number": self.number, "guesses": self.guess_count}
 
     def reset(self, *, seed=None, return_info=True, options=None):
-        if seed is not None:
-            self.seed(seed)
+        super().reset(seed=seed)
         self.number = self.np_random.uniform(-self.range, self.range)
         self.guess_count = 0
         self.observation = 0

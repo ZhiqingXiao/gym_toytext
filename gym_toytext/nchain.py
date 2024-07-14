@@ -31,11 +31,6 @@ class NChainEnv(gym.Env):
         self.state = 0  # Start at beginning of the chain
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Discrete(self.n)
-        self.seed()
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def step(self, action):
         assert self.action_space.contains(action)
@@ -58,8 +53,7 @@ class NChainEnv(gym.Env):
             return results
 
     def reset(self, *, seed=None, return_info=True, options=None):
-        if seed is not None:
-            self.seed(seed)
+        super().reset(seed=seed)
         self.state = 0
         if return_info:
             return self.state, {}

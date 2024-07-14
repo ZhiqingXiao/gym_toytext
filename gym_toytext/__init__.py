@@ -1,3 +1,5 @@
+import numpy as np
+
 from gym.envs.registration import register
 
 from gym_toytext.guessing_game import GuessingGame
@@ -11,6 +13,63 @@ register(
     id="GuessingGame-v0",
     entry_point="gym_toytext:GuessingGame",
     max_episode_steps=200,
+    kwargs={
+        "low": -1000,
+        "high": 1000,
+        "low_bound": -10000,
+        "high_bound": 10000,
+        "rtol": 0,
+        "atol": 10,
+        "guess_max": 200,
+        "rewarder": None,
+        "obs_format": "range",
+        "dtype": np.float32,
+    }
+)
+
+register(
+    id="GuessingGameRange-v0",
+    entry_point="gym_toytext:GuessingGame",
+    max_episode_steps=200,
+    kwargs={
+        "low": -1000,
+        "high": 1000,
+        "low_bound": -10000,
+        "high_bound": 10000,
+        "rtol": 0,
+        "atol": 10,
+        "guess_max": 200,
+        "rewarder": None,
+        "obs_format": "range",
+        "dtype": np.float32,
+    }
+)
+
+register(
+    id="GuessingGame-v1",
+    entry_point="gym_toytext:GuessingGame",
+    max_episode_steps=200,
+    kwargs={
+        "low": 0,
+        "high": 1023,
+        "guess_max": 200,
+        "rewarder": None,
+        "obs_format": "range",
+        "dtype": np.int32,
+    }
+)
+
+register(
+    id="GuessingGameRange-v1",
+    entry_point="gym_toytext:GuessingGame",
+    max_episode_steps=200,
+    kwargs={
+        "low": 0,
+        "high": 1023,
+        "rewarder": None,
+        "obs_format": "range",
+        "dtype": np.int32,
+    }
 )
 
 register(

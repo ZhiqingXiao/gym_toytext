@@ -1,8 +1,12 @@
+from functools import partial
+import six
+
 import numpy as np
 
 import gym
 from gym import spaces
 from gym.utils import seeding
+
 
 
 class GuessingGame(gym.Env):
@@ -36,29 +40,52 @@ class GuessingGame(gym.Env):
 
     The perfect agent would likely learn the bounds of the action space (without referring
     to them explicitly) and then follow binary tree style exploration towards to goal number
+    
+    Parameters
+    ----------
+    low: int | float=-1000
+    high: int  | float=1000
+    low_bound: Optional[int | float]=None
+    high_bound: int | float=None
+    rtol: Optional[int | float]=1e-5
+    atol: Optional[int | float]=1e-8
+    guess_max: Optional[int]=None
+    rewarder: Optional[str | callable]=None  function parameters: action, number, guess_count, done
+    obs_format: Optional[str]=None
     """
-
-    def __init__(self):
-        self.range = 1000  # Randomly selected number is within +/- this value
-        self.bounds = 10000
-
+    INIT, LT, EQ, GT = range(4)
+    
+    def __init__(self, low=-1000, high=1000, low_bound=None, high_bound=None, rtol=1e-5, atol=1e-8, guess_max=None, rewarder=None, obs_format=None, dtype=np.float32):
+        self.low = low
+        self.high = high
+        self.low_bound = low if low_bound is None else low_bound
+        self.high_bound = high if high_bound is None else high_bound
+        self.rtol = rtol
+        self.atol = atol
+        self.rewarder = rewarder
+        self.dtype = dtype
+        self.obs_format = obs_format
+        
         self.action_space = spaces.Box(
-            low=np.array([-self.bounds]).astype(np.float32),
-            high=np.array([self.bounds]).astype(np.float32),
+            low=np.array([self.low_bound], dtype=dtype),
+            high=np.array([self.high_bound], dtype=dtype),
         )
-        self.observation_space = spaces.Discrete(4)
+        if obs_format is None:
+            self.observation_space = spaces.Discrete(4)
+        elif obs_format == "range":
+            self.observation_space = spaces.Box(
+                low=np.array([self.low_bound, self.low_bound], dtype=dtype),
+                high=np.array([self.high_bound, self.high_bound], dtype=dtype),
+            )
+        else:
+            raise NotImplementedError()
 
         self.number = 0
         self.guess_count = 0
-        self.guess_max = 200
+        self.guess_max = guess_max
         self.observation = 0
 
-        self.seed()
         self.reset()
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
 
     def step(self, action):
         if isinstance(action, (int, float)):
@@ -69,46 +96,58 @@ class GuessingGame(gym.Env):
         assert self.action_space.contains(action)
 
         if action < self.number:
-            self.observation = 1
+            self.observation = GuessingGame.LT
+            self.obs_low = action
 
         elif action == self.number:
-            self.observation = 2
+            self.observation = GuessingGame.EQ
+            self.obs_low = action
+            self.obs_high = action
 
         elif action > self.number:
-            self.observation = 3
+            self.observation = GuessingGame.GT
+            self.obs_high = action
 
-        reward = 0
-        done = False
-
-        if (
-            (self.number - self.range * 0.01)
-            < action
-            < (self.number + self.range * 0.01)
-        ):
-            reward = 1
-            done = True
+        act = action[0]
+        done = bool(np.isclose(act, self.number, rtol=self.rtol, atol=self.atol))
+        
+        if self.rewarder is None:
+            reward = int(done)
+        else:
+            kwargs = {"action": act, "number": self.number, "guess_count":  self.guess_count, "done": done}
+            if isinstance(self.rewarder, six.string_types):
+                reward = eval(self.rewarder, kwargs)
+            else:
+                reward = self.rewarder(**kwargs)
 
         self.guess_count += 1
-        if self.guess_count >= self.guess_max:
+        if self.guess_max is not None and self.guess_count >= self.guess_max:
             done = True
 
-        results = (self.observation, reward, done, self._get_info())
+        results = (self._get_obs(), reward, done, self._get_info())
         try:
             from gym.utils.step_api_compatibility import step_api_compatibility
             return step_api_compatibility(results, True)
         except:
             return results
 
+    def _get_obs(self):
+        if self.obs_format is None:
+            return self.observation
+        else:
+            return np.array([self.obs_low, self.obs_high], dtype=self.dtype)
+
     def _get_info(self):
         return {"number": self.number, "guesses": self.guess_count}
 
     def reset(self, *, seed=None, return_info=True, options=None):
-        if seed is not None:
-            self.seed(seed)
-        self.number = self.np_random.uniform(-self.range, self.range)
+        super().reset(seed=seed)
+        self.number = self.dtype(self.np_random.uniform(self.low, self.high))
         self.guess_count = 0
-        self.observation = 0
+        self.observation = GuessingGame.INIT
+        self.obs_low = self.low_bound
+        self.obs_high = self.high_bound
         if return_info:
-            return self.observation, self._get_info()
+            return self._get_obs(), self._get_info()
         else:
-            return self.observation
+            return self._get_obs()

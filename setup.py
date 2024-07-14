@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="gym-toytext",
-    version="0.26.0",
+    version="0.26.1",
     description="Text Environments forked from OpenAI Gym",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -26,5 +26,8 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
 )

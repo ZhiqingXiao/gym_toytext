@@ -7,7 +7,7 @@ def test_roulette():
     observation, info = env.reset()
     while True:
         action = env.action_space.sample()
-        observation, reward, termination, truncation, info = env.step(action)
-        if termination or truncation:
+        observation, reward, terminated, truncated, info = env.step(action)
+        if terminated or truncated:
             break
     env.close()
